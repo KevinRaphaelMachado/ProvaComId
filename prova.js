@@ -2,6 +2,17 @@ const prompt = require("prompt-sync")();
 
 const residencias = [];
 
+let ultimoId = 1;
+
+function getIndice(id) {
+    const indice = residencias.findIndex((el) => el.id == id);
+
+    if (indice == -1) {
+    console.log("ID inexistente");
+    }
+    return indice;
+}
+
 
 
 const validarIndice = (indice) => indice >= 0 && indice < residencias
@@ -14,12 +25,23 @@ const modelo = function (id) {
     const morador = prompt("quais os nomes dos moradores ")
 
     if (bairro !== "" && rua !== "" && numero !== "" && !isNaN(numero)) {
-    return {
-        bairro,
-        rua,
-        numero,
-        morador,
-    };
+        if (id !== undefined) {
+            return {
+                bairro,
+                rua,
+                numero,
+                morador,
+                id
+            };
+        }else {
+            return {
+                bairro,
+                rua,
+                numero,
+                morador,
+                id: ultimoId++
+            };
+        }
     } else {
     console.log("Dados inválidos");
     return undefined;
@@ -28,6 +50,7 @@ const modelo = function (id) {
 
 function criar() {
     const residencia = modelo();
+    console.log(residencia);
 
     if (residencia !== undefined) {
     residencias.push(residencia);
@@ -42,12 +65,11 @@ const listar = () => {
     } else {
     residencias.forEach((residencia, indice) => {
         console.log(`
-            ${indice + 1}. 
+            Id: ${residencia.id}
             Bairro: ${residencia.bairro}
             Rua: ${residencia.rua}
             Numero: ${residencia.numero}
             Morador: ${residencia.morador}
-            
         `);
     });
 
@@ -56,34 +78,33 @@ const listar = () => {
 };
 
 const atualizar = () => {
-    if (!listar()) {
-    return;
-    }
+    listar()
 
-    const indice =
-    parseInt+prompt("Qual o indice que deseja atualizar? ") - 1;
+    const id = +prompt("Qual Id que deseja atualizar? ");
+
+    const indice = getIndice(id)
 
     if (!validarIndice(indice)) {
-    console.log("Índice inválido");
-    return;
+        console.log("Índice inválido");
+        return;
     }
 
-    const residencia = modelo();
+    const residencia = modelo(id);
 
     if (residencia !== undefined) {
-    residencias[indice] = residencia;
-    console.log("residência atualizada com sucesso");
+        residencias[indice] = residencia;
+        console.log("residência atualizada com sucesso");
     } else {
-    console.log("Falha na atualização");
+        console.log("Falha na atualização");
     }
 };
 
 const remover = () => {
-    if (!listar()) {
-    return;
-    }
+    listar() 
+    
+    const id = +prompt("Qual Id você deseja remover? ");
 
-    const indice = +prompt("Qual indice você deseja remover? ") - 1;
+    const indice = getIndice(id)
 
     if (validarIndice(indice)) {
     residencias.splice(indice, 1);
@@ -93,9 +114,12 @@ const remover = () => {
     }
 };
 
+
 module.exports = {
     criar,
     atualizar,
     listar,
     remover,
+    getIndice,
 };
+    

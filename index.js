@@ -1,5 +1,5 @@
 const prompt = require("prompt-sync")();
-const { criar, atualizar, listar, remover } = require("./prova.js");
+const { criar, atualizar, listar, remover, } = require("./prova.js");
 
 while (true) {
     console.log(`
